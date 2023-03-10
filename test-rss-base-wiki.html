@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Generar Fuente WIKI</title>
+    <style>
+        label, textarea, input, select {
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        .labelWiki {
+            font-size: 20px;
+            letter-spacing: 1px;
+        }
+
+        .wiki {
+            height: 150vh;
+            padding: 10px;
+            max-width: 96%;
+            line-height: 1;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-shadow: 1px 1px 1px #999;
+        }
+
+        select {
+            padding: 10px;
+            width: 100%;
+            line-height: 1;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-shadow: 1px 1px 1px #999;
+        }
+
+        .field {
+            box-sizing: border-box;
+            padding: 10px;
+            width: 100%;
+            line-height: 1;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-shadow: 1px 1px 1px #999;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .wikiForm {
+            margin-left: 25px;
+            margin-right: 25px;
+        }
+
+        .formulario {
+            margin-left: 25px;
+        }
+
+
+        button {
+            float: right;
+        }
+
+        span {
+            padding-left: 10px;
+            padding-right: 10px;
+            font-size: 24px;
+        }
+
+        .contenedor { 
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .izquierda { 
+            width: 40%;
+            float: left;
+        }
+
+        .derecha {
+            width: 60%;
+            float: right;
+        }
+    
+        .button-primary {
+            background-color: #007bff;
+            color: #fff;
+            border-color: #007bff;
+            text-transform: uppercase;
+            font-weight: bold;
+            border-radius: .25rem;
+            padding: .375rem .75rem;
+            font-size: 12px;
+            line-height: 1.5;
+            cursor: pointer;
+        }
+
+        .button-primary:hover {
+            background-color: #0069d9;
+            border-color: #0062cc;
+            color: #fff;
+        }
+
+        .button-primary-copy {
+            background-color: #9ACD32;
+            color: #fff;
+            border-color: #9ACD32;
+            text-transform: uppercase;
+            font-weight: bold;
+            border-radius: .25rem;
+            padding: .375rem .75rem;
+            font-size: 12px;
+            line-height: 1.5;
+            cursor: pointer;
+        }
+
+        .flex {
+            display: flex;
+        }
+
+        .row {
+            width: 100%; 
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+	<h1>Creaci&oacute;n de BASE RSS</h1>
+    <div>
+        <div class="izquierda">
+            <form id="formulario" class="formulario">
+                <div>
+                    <button class="form-control button-primary" type="button" onclick="convertir()">Convertir &gt;&gt;</button><br><br>
+                </div>
+                <div class="row">
+                    <label for="NAME">Nombre de la Base</label>
+                    <input class="field" type="text" id="NAME" name="NAME" required>
+                </div>
+                <div class="row flex">
+                    <div style="width: 50%; padding-right: 40px;">
+                        <label for="PLAYER">Usuario de NMS</label>
+                        <input class="field" type="text" id="PLAYER" name="PLAYER" required>
+                    </div>
+                    <div style="width: 50%;">
+                        <label for="DISCORD_USR">Usuario de Discord</label>
+                        <input class="field" type="text" id="DISCORD_USR" name="DISCORD_USR" required>
+                    </div>
+                </div>
+                <div class="row flex">
+                    <div style="width: 50%; padding-right: 40px;">
+                        <label for="RSS_ARRIVAL">Fecha de Arribo a la RSS</label>
+                        <input class="field" type="date" id="RSS_ARRIVAL" name="RSS_ARRIVAL" required>
+                    </div>
+                    <div style="width: 50%;">
+                        <label for="VERSION">Version de NMS</label>
+                        <select id="VERSION" name="VERSION">
+                            <option value="Fractal">Fractal</option>
+                            <!-- AQUI SE PODRIA COLOCAR TODAS LAS VERSIONES SI SE QUIERE -->
+                        </select>
+                    </div>
+                </div>
+                <div class="row flex">
+                    <div style="width: 100%; padding-right: 10px;">
+                        <label for="coordenadas">Coordenadas Gal&aacute;cticas <a href="https://nmsportals.github.io">(ver Portal Decoder)</a></label>
+                        <div style="width: 100%;display: flex;">
+                            <input class="field" type="text" name="C1" id="C1" maxlength="4" oninput="validateHexInput(this)"><span>:</span>
+                            <input class="field" type="text" name="C2" id="C2" maxlength="4" oninput="validateHexInput(this)"><span>:</span>
+                            <input class="field" type="text" name="C3" id="C3" maxlength="4" oninput="validateHexInput(this)"><span>:</span>
+                            <input class="field" type="text" name="C4" id="C4" maxlength="4" oninput="validateHexInput(this)">
+                        </div>
+                    </div>
+                </div>
+                <div class="row flex">
+                    <div style="width: 50%; padding-right: 40px;">
+                        <label for="PORTAL_CODE">C&oacute;digo del portal</label>
+                        <input class="field" type="text" id="PORTAL_CODE" name="PORTAL_CODE"  maxlength="12" oninput="validateHexInput(this)" required>
+                    </div>
+                    <div style="width: 50%;">
+                        <label for="latitud">Coordenadas Planetarias:</label>
+                        <div style="width: 100%;display: flex;">
+                            <input class="field" style="margin-right: 10px;" type="number" id="LATITUD" name="LATITUD" step="0.1" min="-90" max="90" required>
+                            <input class="field" type="number" id="LONGITUD" name="LONGITUD" step="0.1" min="-180" max="180" required>
+                        </div>
+                    </div>
+                </div>
+                <div style="width: 100%;display: flex; margin-bottom: 10px;">
+                    <div style="width: 50%; padding-right: 40px;">
+                        <label for="GALAXIA">Galaxia:</label>
+                        <select id="GALAXIA" name="GALAXIA">
+                            <option value="Euclid">Euclid</option>
+                            <!-- AQUI SE PODRIA COLOCAR TODAS LAS GALAXIAS -->
+                        </select>
+                    </div>
+                    <div style="width: 50%;">
+                        <label for="REGION">Regi&oacute;n:</label>
+                        <input class="field" type="text" id="REGION" name="REGION" required>
+                    </div>
+                </div>
+                <div class="row flex">
+                    <div style="width: 50%; padding-right: 40px;">
+                        <label for="SYSTEM">Sistema:</label>
+                        <input class="field" type="text" id="SYSTEM" name="SYSTEM" required>
+                    </div>
+                    <div style="width: 50%;">
+                        <label for="PLANET">Planeta:</label>
+                        <input class="field" type="text" id="PLANET" name="PLANET" required>
+                    </div>
+                </div>
+                <div class="row flex">
+                    <div style="width: 50%; padding-right: 40px;">
+                        <label for="TYPE">Tipo:</label>
+                        <input class="field" type="text" id="TYPE" name="TYPE" required>
+                    </div>    
+                    <div style="width: 50%;">
+                        <label for="MODE">Modo de juego:</label>
+                        <select id="MODE" name="MODE">
+                            <option value="Normal">Normal</option>
+                            <option value="Permadeath">Permadeath</option>
+                            <option value="Creative">Creativo</option>
+                            <option value="Survival">Supervivencia</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row flex">
+                    <div style="width: 50%; padding-right: 40px;">
+                        <label for="PLATFORM">Plataforma:</label>
+                        <select id="PLATFORM" name="PLATFORM">
+                            <option value="PC">PC</option>
+                            <option value="PS4">PS4</option>
+                            <option value="PS5">PS5</option>
+                            <option value="Xbox">Xbox</option>
+                        </select>
+                    </div>
+                    <div style="width: 50%;"></div>
+                </div>
+                <div class="row flex">
+                    <label style="width: 33.33%"><input type="checkbox" name="FARM" value="Farm"> Farm</label>
+                    <label style="width: 33.33%"><input type="checkbox" name="GEOBAY" value="Geobay"> Geobay</label>
+                    <label style="width: 33.33%"><input type="checkbox" name="ARENA" value="Arena"> Arena</label>
+                </div>
+                <div class="row flex">
+                    <label style="width: 33.33%"><input type="checkbox" name="LANDINGPAD"> Landingpad</label>
+                    <label style="width: 33.33%"><input type="checkbox" name="RACETRACK" value="Geobay"> Racetrack</label>
+                    <label style="width: 33.33%"><input type="checkbox" name="TERMINAL" value="Arena"> Terminal</label>
+                </div>
+                <div class="row">
+                    <label for="LAYAOUT">Layaout:</label>
+                    <textarea style="width: 100%;" id="LAYAOUT" name="LAYAOUT" rows="15" cols="100"></textarea>
+                </div>
+                <div class="row">
+                    <label for="FEATURES">Features:</label>
+                    <textarea style="width: 100%;" id="FEATURES" name="FEATURES"" rows="15" cols="100"></textarea>
+                </div>
+                <button class="form-control button-primary" type="button" onclick="convertir()">Convertir &gt;&gt;</button>
+            </form>
+        </div>
+        <div class="derecha">
+            <form class="wikiForm">
+                <div style="margin-bottom: 10px;display: flow-root;">
+                    <button class="form-control button-primary-copy" type="button" onclick="copiarAlPortapapeles()">Copiar al portapapeles</button>
+                    <label class="labelWiki" for="nombre">Codigo wiki:</label>
+                </div>
+                <div style="width: 100%;display: flow-root; margin-bottom: 10px;">
+                    <textarea class="wiki" id="wikicode" name="wikicode" cols="200"></textarea>
+                </div>
+                <div style="margin-bottom: 10px;display: flow-root;">
+                    <button class="form-control button-primary-copy" type="button" onclick="copiarAlPortapapeles()">Copiar al portapapeles</button>
+                </div>
+            </form>
+        </div>
+    </div>
+	<script>
+        function convertir() {
+			var wiki = "{{Version|%VERSION%}}\n{{Base infobox\n| name = %NAME%\n| image = portada.png\n| civilized = Royal Space Society\n| builder = %PLAYER%\n| builderlink = \n| galaxy = %GALAXIA%\n| region = %REGION%\n| system = %SYSTEM%\n| planet = %PLANET%\n| moon = \n| axes = %LATITUD% / %LONGITUD%\n| coordinates = %C1%:%C2%:%C3%:%C4%\n| portalglyphs = {{Gl/Small|%PORTAL_CODE%}}\n| type = %TYPE%\n| mode = %MODE%\n| platform = %PLATFORM%\n| release = %VERSION%\n| farm = %FARM%\n| geobay = %GEOBAY%\n| arena = %ARENA%\n| landingpad = %LANDINGPAD%\n| racetrack = %RACETRACK%\n| terminal = %TERMINAL%\n| censusplayer = %PLAYER%\n| censusreddit = \n| censusdiscord = %DISCORD_USR%\n| censusfriend = \n| censusarrival = %RSS_ARRIVAL%\n| censusrenewal = %RENEWAL%\n| censusshow = %SHOW%\n}}\n\'\'\'%NAME%\'\'\' is a player base.\n\n==Summary==\n\'\'\'%NAME%\'\'\' is a [[Habitable Base|player base]], located on the planet [[%PLANET%]] in the [[%SYSTEM%]] system.\n\n==Layout==\n%LAYAOUT%\n\n==Features==\n%FEATURES%\n\n==Additional Information==\n\n==Gallery==\n<gallery>\n</gallery>"; 
+
+			var formulario = document.getElementById("formulario");
+			var datos = new FormData(formulario);
+
+            var FARM = 'N';
+            var GEOBAY = 'N';
+            var ARENA = 'N';
+            var LANDINGPAD = 'N';
+            var RACETRACK = 'N';
+            var TERMINAL = 'N';
+
+			for (var [key, value] of datos.entries()) {
+                if ("FARM" === key) { FARM = 'S'; }
+                if ("GEOBAY" === key) { GEOBAY = 'S'; }
+                if ("ARENA" === key) { ARENA = 'S'; }
+                if ("LANDINGPAD" === key) { LANDINGPAD = 'S'; }
+                if ("RACETRACK" === key) { RACETRACK = 'S'; }
+                if ("TERMINAL" === key) { TERMINAL = 'S'; }
+                if (("FARM" !== key) && ("GEOBAY" !== key) && ("ARENA" !== key) && ("LANDINGPAD" !== key) && ("RACETRACK" !== key) && ("TERMINAL" !== key)) {
+                    console.log(key);
+                    wiki = wiki.replace(new RegExp("\\%" + key + "\\%", 'g'), value);
+                }
+			}
+            wiki = wiki.replace(new RegExp("\\%FARM\\%", 'g'), FARM);
+            wiki = wiki.replace(new RegExp("\\%GEOBAY\\%", 'g'), GEOBAY);
+            wiki = wiki.replace(new RegExp("\\%ARENA\\%", 'g'), ARENA);
+            wiki = wiki.replace(new RegExp("\\%LANDINGPAD\\%", 'g'), LANDINGPAD);
+            wiki = wiki.replace(new RegExp("\\%RACETRACK\\%", 'g'), RACETRACK);
+            wiki = wiki.replace(new RegExp("\\%TERMINAL\\%", 'g'), TERMINAL);
+            const fechaActual = new Date();
+            wiki = wiki.replace(new RegExp("\\%RENEWAL\\%", 'g'), fechaActual.getFullYear());
+            wiki = wiki.replace(new RegExp("\\%SHOW\\%", 'g'), "N");
+
+			var resultado = document.getElementById('wikicode');
+            resultado.value = wiki;
+		}
+        function copiarAlPortapapeles() {
+			var textarea = document.getElementById("wikicode");
+			textarea.select();
+			document.execCommand("copy");
+		}
+        function validateHexInput(input) {
+            input.value = input.value.replace(/[^0-9A-Fa-f]/g, "").toUpperCase();
+        }
+	</script>
+</body>
+</html>
